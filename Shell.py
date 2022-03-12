@@ -23,7 +23,8 @@ def run(fn, text):
  if ast.error: return None, ast.error
 
  interpreter = Interpreter()
- result = interpreter.visit(ast.node)
+ context = Context('<program>')
+ result = interpreter.visit(ast.node, context)
 
  return result.value, result.error
 

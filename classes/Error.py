@@ -8,6 +8,7 @@ Classes:
   - Error              - The main Error class
   - IllegalCharError   - The Error class for illegal characters
   - InvalidSyntaxError - The Error class for invalid syntax
+  - RTError            - The RuntimeError class for RTResult
 
 """
 class Error:
@@ -103,3 +104,40 @@ class InternalError(Error):
 
  def get(self):
   return Error(self.PRINT_ONLY, self.ERROR_TEXT, self.STACKTRACE)
+
+class RTError(Error):
+ """
+ 
+ The Error class for RTResult. Inherits fields and methods from Error class.
+
+ Methods:
+   - get(): Error - Returns the RTError as an Error
+
+ """
+ def __init__(self, CONTEXT, POS_START, details=''):
+  super().__init__(None, None, ERROR_TEXT='Runtime Error',STACKTRACE=[f'A runtime error occured; {details}'])
+  self.context = CONTEXT
+  self.pos_start = POS_START
+
+ def get(self):
+  return Error(self.PRINT_ONLY, self.ERROR_TEXT, self.STACKTRACE)
+
+ def printStacktrace(self):
+  f = "Stacktrace: "
+  for stline in self.STACKTRACE:
+   f = f + stline + "\n"
+  print(f)
+  print(self.generate_traceback())
+  return None
+
+ def generate_traceback(self):
+  result = ''
+  pos = self.pos_start
+  ctx = self.context
+
+  while ctx:
+   result = f'  File {pos.fn}, line {str(pos.ln + 1)}, in {ctx.display_name}\n{result}'
+   pos = ctx.parent_entry_pos
+   ctx = ctx.parent
+
+  return f'{result}'
