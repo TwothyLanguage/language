@@ -53,6 +53,7 @@ class Interpreter:
   elif node.op_tok.type == MINUS: result, error = left.subbed_by(right)
   elif node.op_tok.type == MUL:   result, error = left.multed_by(right)
   elif node.op_tok.type == DIV:   result, error = left.dived_by(right)
+  elif node.op_tok.type == POW:   result, error = left.powed_by(right)
 
   if error: return res.failure(error)
   else: return res.success(result.set_pos(node.pos_start, node.pos_end))

@@ -52,6 +52,9 @@ class Lexer:
    elif self.current_char == '/':
     tokens.append(Token('DIV', pos_start=self.pos))
     self.advance()
+   elif self.current_char == '^':
+    tokens.append(Token('POW', pos_start=self.pos))
+    self.advance()
    elif self.current_char == '(':
     tokens.append(Token('LPAREN', pos_start=self.pos))
     self.advance()

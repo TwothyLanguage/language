@@ -43,3 +43,7 @@ class Number:
     return Number(self.value / other.value).set_context(self.context), None
    except ZeroDivisionError:
     return Number(0).set_context(self.context), None
+
+ def powed_by(self, other):
+  if isinstance(other, Number):
+   return Number(self.value ** other.value).set_context(self.context), None
