@@ -1,2 +1,2 @@
-# language
-Twothy Language made with Python.
+# Twothy
+Twothy is a programming language made in Python.
