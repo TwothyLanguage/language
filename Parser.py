@@ -47,7 +47,7 @@ class Parser:
  def parse(self):
   res = self.expr()
   if not res.error and self.current_tok.type != 'EOF':
-   return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end,"Expected '+', '-', '*', '/' or '%'"))
+   return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end,"Expected int, float, '+', '-' or '('"))
   return res
 
  def atom(self):
@@ -57,6 +57,10 @@ class Parser:
   if tok.type in (INT, FLOAT):
    res.register(self.advance())
    return res.success(NumberNode(tok))
+
+  elif tok.type == VARIDENT:
+   res.register(self.advance())
+   return res.success(VarAccessNode(tok))
 
   elif tok.type == LPAREN:
    res.register(self.advance())
@@ -87,6 +91,18 @@ class Parser:
   return self.bin_op(self.factor, (MUL, DIV))
 
  def expr(self):
+  res = ParseResult()
+  if self.current_tok.matches(KEYWORD, 'VAR'):
+   res.register(self.advance())
+   if self.current_tok.type != VARIDENT:return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected identifier"))
+   var_name = self.current_tok
+   res.register(self.advance())
+   if self.current_tok.type != EQ:return res.failure(InvalidSyntaxError(self.current_tok.pos_start, self.current_tok.pos_end, "Expected '='"))
+   res.register(self.advance())
+   expr = res.register(self.expr())
+   if res.error: return res
+   return res.success(VarAssignNode(var_name, expr))
+
   return self.bin_op(self.term, (PLUS, MINUS))
 
  def bin_op(self, func_a, ops, func_b=None):

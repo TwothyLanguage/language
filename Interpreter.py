@@ -26,7 +26,7 @@ class RTResult:
   self.value = value
   return self
 
- def failure(self, value):
+ def failure(self, error):
   self.error = error
   return self
 
@@ -37,7 +37,26 @@ class Interpreter:
   return method(node, context)
 
  def no_visit_method(self, node, context):
-  raise InternalError(f'No visit method for {type(node).__name__} found.')
+  err = InternalError()
+  err.STACKTRACE = [f'An internal error occured; No visit method for {type(node).__name__} found.']
+  return RTResult().failure(err.throw())
+
+ def visit_VarAccessNode(self, node, context):
+  res = RTResult()
+  var_name = node.var_name_tok.value
+  value = context.symbol_table.get(var_name)
+
+  if not value: return res.failure(RTError(node.pos_start,node.pos_end,f'\'{var_name}\' is not defined', context))
+  return res.success(value)
+
+ def visit_VarAssignNode(self, node, context):
+  res = RTResult()
+  var_name = node.var_name_tok.value
+  value = res.register(self.visit(node.value_node, context))
+  if res.error: return res
+
+  context.symbol_table.set(var_name, value)
+  return res.success(value)
 
  def visit_NumberNode(self, node, context):
   return RTResult().success(Number(node.tok.value).set_context(context).set_pos(node.pos_start, node.pos_end))

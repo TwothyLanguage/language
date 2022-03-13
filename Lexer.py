@@ -35,11 +35,9 @@ class Lexer:
 
   while self.current_char != None:
    if self.current_char in ALPHABET:
-    tokens.append(Token('LETTER', pos_start=self.pos, value=self.current_char))
-    self.advance()
+    tokens.append(self.make_identifier())
    elif self.current_char in DIGITS:
     tokens.append(self.make_number())
-    self.advance()
    elif self.current_char == '+':
     tokens.append(Token('PLUS', pos_start=self.pos))
     self.advance()
@@ -54,6 +52,12 @@ class Lexer:
     self.advance()
    elif self.current_char == '^':
     tokens.append(Token('POW', pos_start=self.pos))
+    self.advance()
+   elif self.current_char == '=':
+    tokens.append(Token('EQ', pos_start=self.pos))
+    self.advance()
+   elif self.current_char == 'π':
+    tokens.append(Token('FLOAT', float(3.1415926535), pos_start=self.pos))
     self.advance()
    elif self.current_char == '(':
     tokens.append(Token('LPAREN', pos_start=self.pos))
@@ -90,3 +94,14 @@ class Lexer:
    return Token('INT', int(num_str), pos_start, self.pos)
   else:
    return Token('FLOAT', float(num_str), pos_start, self.pos)
+
+ def make_identifier(self):
+  id_str = ''
+  pos_start = self.pos.copy()
+
+  while self.current_char != None and self.current_char in ALPHABET+DIGITS+'_':
+   id_str += self.current_char
+   self.advance()
+
+  tok_type = 'KEYWORD' if id_str in KEYWORDS else 'VARIDENT'
+  return Token(tok_type, id_str, pos_start, self.pos)

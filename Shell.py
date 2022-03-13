@@ -13,6 +13,11 @@ for classfile in Path.cwd().iterdir():
 
 from classes.Error import *
 
+global_symbol_table = SymbolTable()
+global_symbol_table.set("True",  Number(1),            True)
+global_symbol_table.set("False", Number(0),            True)
+global_symbol_table.set("Pi",    Number(3.1415926535), True)
+
 def run(fn, text):
  lexer = Lexer(fn, text)
  tokens, error = lexer.make_tokens()
@@ -24,6 +29,7 @@ def run(fn, text):
 
  interpreter = Interpreter()
  context = Context('<program>')
+ context.symbol_table = global_symbol_table
  result = interpreter.visit(ast.node, context)
 
  return result.value, result.error
