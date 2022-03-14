@@ -40,7 +40,10 @@ class Number:
  def dived_by(self, other):
   if isinstance(other, Number):
    try:
-    return Number(self.value / other.value).set_context(self.context), None
+    num = Number(self.value / other.value).set_context(self.context)
+    if str(num.value).endswith(".0"):
+     num.value = int(str(num.value)[:-2])
+    return num, None
    except ZeroDivisionError:
     return Number(0).set_context(self.context), None
 

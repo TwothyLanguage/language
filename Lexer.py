@@ -92,6 +92,8 @@ class Lexer:
 
   if dot_count == 0:
    return Token('INT', int(num_str), pos_start, self.pos)
+  elif num_str.endswith(".0"):
+   return Token('INT', int(num_str), pos_start, self.pos)
   else:
    return Token('FLOAT', float(num_str), pos_start, self.pos)
 
