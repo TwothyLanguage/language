@@ -46,7 +46,7 @@ class Interpreter:
   var_name = node.var_name_tok.value
   value = context.symbol_table.get(var_name)
 
-  if not value: return res.failure(RTError(node.pos_start,node.pos_end,f'\'{var_name}\' is not defined', context))
+  if not value: return res.failure(RTError(POS_START=node.pos_start,details=f'\'{var_name}\' is not defined', CONTEXT=context))
   return res.success(value)
 
  def visit_VarAssignNode(self, node, context):

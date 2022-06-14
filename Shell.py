@@ -34,9 +34,10 @@ def run(fn, text):
 
  return result.value, result.error
 
-while 1:
- text = input("twothy > ")
- result, error = run('<stdin>', text)
-
- if error: error.throw()
- else: print(result)
+if __name__ == '__main__':
+ while 1:
+  text = input("twothy > ")
+  result, error = run('<stdin>', text)
+ 
+  if error: error.throw()
+  else: print(result)
